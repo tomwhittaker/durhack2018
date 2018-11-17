@@ -47,12 +47,12 @@ app.post('/addEvent', (request, response) => {
 app.get('/events', (request, response) => {
 	var d = new Date();
 	var n = d.getTime();
-  for (var i = events.length-1; i>=0; i--){
-  	if (Date.parse(events[i]['date']) > n){
-  		events.splice(i)
-  		console.log('del')
-  	}
-  }
+  // for (var i = events.length-1; i>=0; i--){
+  // 	if (Date.parse(events[i]['date']) > n){
+  // 		events.splice(i)
+  // 		console.log('del')
+  // 	}
+  // }
   response.send(JSON.stringify(events))
 })
 

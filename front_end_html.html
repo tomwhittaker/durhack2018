@@ -12,9 +12,23 @@
 <script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-ui.js"></script>
 <script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-mapevents.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+<style>
+	.frame {width: 100%; height: 100%; position: absolute; background: white}
+	#my-login-button-target{
+		position: absolute;
+		top: 45%;
+		left: 37%;
+	}
+
+</style>
+<script type="text/javascript">
+	userData = -1;
+	countyClicked = "";
+</script>
 </head>
 <body>
-<u> 
+<div class="frame" id="events">
+	<u> 
 	<h1> 
 		<p class="text-center">Events near You </p> </h1> </u> 
 <strong>
@@ -29,10 +43,48 @@
 		<br><br>
  	  </tbody> 
  	</table> 
- </div> <figure class=highlight><pre><code class=language-html data-lang=html>
+ </div> <figure class=highlight><pre><code class=language-html data-lang=html></code>
+</div>
+
+ <div class="frame" id="Map">
+	<div style="width: 100%; height: 100%" id="mapContainer"></div>
+</div>
 
 
-  <div style="width: 640px; height: 480px" id="mapContainer"></div>
+<div class="frame" id="Login">
+	<div id="my-login-button-target" />
+    <script>
+       window.snapKitInit = function () {
+        var loginButtonIconId = 'my-login-button-target';
+        // Mount Login Button
+        snap.loginkit.mountButton(loginButtonIconId, {
+          clientId: '1d26c036-2958-481c-9173-14a4e36b8c65',
+          redirectURI: 'http://localhost:100/front_end_html.html',
+          scopeList: [
+            'user.display_name',
+            'user.bitmoji.avatar',
+          ],
+          handleResponseCallback: function() {
+            snap.loginkit.fetchUserInfo()
+              .then(function(data){
+              	userData=data;
+              	$("#Login").hide();
+              });
+          },
+        });
+      };
+
+      // Load the SDK asynchronously
+      (function (d, s, id) {
+        var js, sjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://sdk.snapkit.com/js/v1/login.js";
+        sjs.parentNode.insertBefore(js, sjs);
+      }(document, 'script', 'loginkit-sdk'));
+    </script>
+</div>
+ 
 
   <script>
 
@@ -77,7 +129,8 @@ moveMapToBerlin(map);
     	//console.log(JSON.stringify(data.address));
     	var county = JSON.stringify(data.address.county);
 		filterTable(county.toLowerCase().substring(1,county.length-1))
-    	
+		$("#Map").hide();
+		countyClicked = county;
     });
     
     //alert('Clicked at ' + Math.abs(coord.lat.toFixed(4)) +
@@ -114,6 +167,7 @@ moveMapToBerlin(map);
 		  	}
 		});
 	</script>
+
 <script>
 var geocoder;
 var map;
@@ -147,34 +201,10 @@ function initialize(lng,lat) {
     }); <!--click event--> }
     google.maps.event.addDomListener(window, 'load', initialize);
 </script>
-<div id="map-canvas"></div>
-<div id="my-login-button-target" />
-    <script>
-       window.snapKitInit = function () {
-        var loginButtonIconId = 'my-login-button-target';
-        // Mount Login Button
-        snap.loginkit.mountButton(loginButtonIconId, {
-          clientId: '1d26c036-2958-481c-9173-14a4e36b8c65',
-          redirectURI: 'http://localhost:100/front_end_html.html',
-          scopeList: [
-            'user.display_name',
-            'user.bitmoji.avatar',
-          ],
-          handleResponseCallback: function() {
-            snap.loginkit.fetchUserInfo()
-              .then(data => console.log('User info:', data));
-          },
-        });
-      };
 
-      // Load the SDK asynchronously
-      (function (d, s, id) {
-        var js, sjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "https://sdk.snapkit.com/js/v1/login.js";
-        sjs.parentNode.insertBefore(js, sjs);
-      }(document, 'script', 'loginkit-sdk'));
-    </script>
+
+
+
 </body>
+
 </html>
