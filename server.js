@@ -9,6 +9,7 @@ class Event {
 }
 
 var events = [];
+var campusRep = ["Tom Whittaker"];
 
 
 const express = require('express')
@@ -30,6 +31,10 @@ app.post('/addEvent', (request, response) => {
   var location=request.body.location;
   var time=request.body.time;
   var date=request.body.date;
+  if (parseINT(date.substring(0,1)) > 12){
+  	res = date.split("/")
+  	date = res[1] + "/" + res[0] + "/" + res[2]
+  }
   var event = new Event(eventName,company,location,time,date)
   events.push(event);
   console.log("Event Added: "+eventName);
@@ -38,8 +43,26 @@ app.post('/addEvent', (request, response) => {
 })
 
 app.get('/events', (request, response) => {
+  for (var i = events.length-1; i>=0; i++){
+  	if (Date.parse(events[i]['date']) < Date.getTime()){
+  		events.splice(i)
+  	}
+  }
   response.send(JSON.stringify(events))
 })
+
+app.post('/rep', (request, response) => {
+	console.log(request.body.userName)
+  if (campusRep.includes(request.body.userName)){
+  	result = {"result":"true"}
+  	response.send(JSON.stringify(result))
+  } else {
+  	result = {"result":"false"}
+  	response.send(JSON.stringify(result))
+  }
+  
+})
+
 
 
 app.listen(port, (err) => {
