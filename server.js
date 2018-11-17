@@ -16,6 +16,8 @@ const express = require('express')
 const bodyParser = require("body-parser");
 const app = express()
 const port = 3000
+var cors = require('cors');
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -31,7 +33,7 @@ app.post('/addEvent', (request, response) => {
   var location=request.body.location;
   var time=request.body.time;
   var date=request.body.date;
-  if (parseINT(date.substring(0,1)) > 12){
+  if (parseInt(date.substring(0,1)) > 12){
   	res = date.split("/")
   	date = res[1] + "/" + res[0] + "/" + res[2]
   }
@@ -43,9 +45,12 @@ app.post('/addEvent', (request, response) => {
 })
 
 app.get('/events', (request, response) => {
-  for (var i = events.length-1; i>=0; i++){
-  	if (Date.parse(events[i]['date']) < Date.getTime()){
+	var d = new Date();
+	var n = d.getTime();
+  for (var i = events.length-1; i>=0; i--){
+  	if (Date.parse(events[i]['date']) > n){
   		events.splice(i)
+  		console.log('del')
   	}
   }
   response.send(JSON.stringify(events))
