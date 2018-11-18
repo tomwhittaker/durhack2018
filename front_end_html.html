@@ -21,6 +21,73 @@
 	}
 
 </style>
+
+<div class="frame" id="eventForm">
+	<form onsubmit="return false">
+  <div class="form-group">
+    <p class="text-center"=<label for="eventname">Event Name</p></label>
+    <input type="eventname" class="form-control" id="eventname" placeholder="Event Name">
+  </div>
+  <div class="form-group">
+    <p class="text-center"=<label for="company">Company</p></label>
+    <input type="company" class="form-control" id="company" placeholder="Company">
+  </div>
+    <div class="form-group">
+    <p class="text-center"=<label for="location">Location</p></label>
+    <input type="location" class="form-control" id="location" placeholder="Location">
+  </div>
+   <div class="form-group">
+    <p class="text-center"=<label for="time">Time</p></label>
+    <input type="time" class="form-control" id="time" placeholder="Time hr:min">
+  </div>
+   <div class="form-group">
+    <p class="text-center"=<label for="date">Date</p></label>
+    <input type="date" class="form-control" id="date" placeholder="Date mm/dd/yyyy">
+  </div>
+  <button type="submit" class="btn btn-default" id="submitButton">Submit</button> 
+</form>
+<script>
+	$("#submitButton").click(function(){
+		var eventname = document.getElementById("eventname").value;
+		var company = document.getElementById("company").value;
+		var location = document.getElementById("location").value
+		var time = document.getElementById("time").value
+		var date = document.getElementById("date").value
+
+		formData = {
+			"eventName" : eventname,
+			"company"   : company,
+			"location"  : location,
+			"time"      : time,
+			"date"      : date
+		}
+		console.log(formData)
+		$.post("http://10.245.4.227:3000/addEvent",formData,function(data){
+			console.log("submit")
+		}).then(function(data){
+			$("#tableBody").empty();
+			$.get( "http://10.245.4.227:3000/events", function(data) {
+				var obj = jQuery.parseJSON(data);
+			  	for (event in obj){
+			  		console.log(obj[event]);
+			  		// console.log(obj[event]['eventName']);
+			  		number = parseInt(event)+1
+					$( "#tableBody" ).append( "<tr> <th scope=row>"+number+"</th><td>"+obj[event]['eventName']+"</td><td>"+obj[event]['company']+"</td><td>"+obj[event]['location']+"</td><td>"+obj[event]['time']+"</td><td>"+obj[event]['date']+"</td></tr>");
+			  	}
+			}).then(function(date){
+				$("#events").show();
+			})	
+		})
+
+	})
+
+
+</script>
+</div>
+
+
+
+
 <script type="text/javascript">
 	userData = -1;
 	countyClicked = "";
@@ -31,7 +98,7 @@
 	<u> 
 	<h1> 
 		<p class="text-center">Events near You </p> </h1> </u> 
-<strong>
+	<strong>
  <p class="lead, text-center">Locate your nearest event </strong> </p>
 
  <div class=bs-example data-example-id=simple-table> 
@@ -46,7 +113,7 @@
  </div> <figure class=highlight><pre><code class=language-html data-lang=html></code>
 </div>
 
- <div class="frame" id="Map">
+<div class="frame" id="Map">
 	<div style="width: 100%; height: 100%" id="mapContainer"></div>
 </div>
 
